@@ -1,0 +1,97 @@
+name: SeruBans
+main: net.serubin.serubans.SeruBans
+version: 2.9
+
+commands:
+  ban:
+    description: Bans player
+    usage: |
+          /<command> [options] <player> <reason> - bans player
+          -s Silent broadcast on server
+          -h Hides from banlist
+  tempban:
+    description: tempbans player
+    usage: |
+          /<command> [options] <player> <amount> <unit> <reason> - tempbans player
+          -s Silent broadcast on server
+          -h Hides from banlist
+  kick:
+    description: kicks player
+    usage: |
+          /<command> [options] <player> <reason> - kicks player
+          -s Silent broadcast on server
+          -h Hides from banlist
+  warn:
+    description: warns player
+    usage: | 
+          /<command> [options] <player> <reason> - warns player
+          -s Silent broadcast on server
+          -h Hides from banlist
+  unban:
+    description: unbans player
+    usage: /<command> <player> - unbans player
+  checkban:
+    description: checks if a player is banned
+    usage: /<command> <player> - checks if a player is banned
+  bsearch:
+    description: search function
+    usage: /<command> p:<player> t:<type> i:<id> - search function
+  bupdate:
+    description: updates reason
+    usage: /<command> <id> <reason> - updates reason
+  serubans:
+    description: Help
+    usage: /<command> <help> [-option] - help/debug
+      
+permissions:
+  serubans.*:
+    description: gives full permission on Serubans.
+    children:
+      serubans.ban: true
+      serubans.tempban: true
+      serubans.kick: true
+      serubans.warn: true
+      serubans.unban: true
+      serubans.checkban: true
+      serubans.debug: true
+      serubans.update: true
+      serubans.search: true
+      serubans.broadcast: true
+      serubans.broadcast.normal: true
+      serubans.help: true
+  serubans.ban:
+    description: gives permission to ban players
+    default: op
+  serubans.tempban:
+    description: gives permission to tempban players
+    default: op
+  serubans.kick:
+    description: gives permission to kick players
+    default: op
+  serubans.warn:
+    description: gives permission to warn players
+    default: op
+  serubans.unban:
+    description: gives permission to unban players
+    default: op
+  serubans.checkban:
+    description: gives permission to check for banned players
+    default: op
+  serubans.debug:
+    description: gives permission to use debug tools
+    default: op
+  serubans.update:
+    description: gives permission to update ban reasons
+    default: op
+  serubans.search:
+    description: gives permission to search bans database
+    default: op
+  serubans.broadcast:
+    description: gives permission to see all ban broadcasts
+    default: op
+  serubans.broadcast.normal:
+    description: gives permission to see ban broadcasts
+    default: op
+  serubans.help:
+    description: gives permission to see help menus
+    default: op

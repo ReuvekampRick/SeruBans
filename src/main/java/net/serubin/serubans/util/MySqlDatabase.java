@@ -59,7 +59,6 @@ public class MySqlDatabase implements Runnable {
 		getTempBans();
 		getBanIds();
 		getWarns();
-
 	}
 
 	/**
@@ -325,7 +324,7 @@ public class MySqlDatabase implements Runnable {
 		try {
 			ps = conn
 					.prepareStatement("SELECT * FROM users WHERE (users.id > ?);");
-			ps.setInt(0, lastUserId);
+			ps.setInt(1, lastUserId);
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Integer pId = rs.getInt("id");
@@ -347,7 +346,7 @@ public class MySqlDatabase implements Runnable {
 							+ " INNER JOIN users"
 							+ "  ON bans.player_id=users.id"
 							+ " WHERE (type = 1 OR type = 2) AND (bans.id > ?)");
-			ps.setInt(0, lastBanId);
+			ps.setInt(1, lastBanId);
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Integer bId = rs.getInt("bans.id");
@@ -366,7 +365,7 @@ public class MySqlDatabase implements Runnable {
 		try {
 			ps = conn
 					.prepareStatement("SELECT bans.id FROM bans WHERE (bans.id > ?);");
-			ps.setInt(0, lastBanId);
+			ps.setInt(1, lastBanId);
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Integer id = rs.getInt("bans.id");
@@ -384,7 +383,7 @@ public class MySqlDatabase implements Runnable {
 		try {
 			ps = conn.prepareStatement("SELECT id, length" + " FROM bans"
 					+ " WHERE (type = 2) AND (bans.id > ?)");
-			ps.setInt(0, lastBanId);
+			ps.setInt(1, lastBanId);
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Integer bId = rs.getInt("id");
@@ -404,7 +403,7 @@ public class MySqlDatabase implements Runnable {
 		try {
 			ps = conn
 					.prepareStatement("SELECT player_id, ban_id FROM warns WHERE (ban_id > ?);");
-			ps.setInt(0, lastBanId);
+			ps.setInt(1, lastBanId);
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				Integer pId = rs.getInt("player_id");
@@ -463,8 +462,41 @@ public class MySqlDatabase implements Runnable {
 				SeruBans.printInfo("Error adding ban!");
 			}
 		} catch (SQLException e) {
-
-			e.printStackTrace();
+			SeruBans.printInfo(ArgProcessing.getBanTypeString(type)
+					+ ": " + victim + " Initial ban failed switching to secondary (rr) modes! ");
+			maintainConnection();
+			try {
+				ps = conn
+						.prepareStatement(
+								"INSERT INTO bans (`player_id`, `type`, `length`, `mod`, `date`, `reason`, `display`) VALUES(?,?,?,?,?,?,?);",
+								Statement.RETURN_GENERATED_KEYS);
+				ps.setInt(1, HashMaps.getPlayerList(victim.toLowerCase()));
+				ps.setInt(2, type);
+				ps.setLong(3, length);
+				ps.setInt(4, HashMaps.getPlayerList(mod.toLowerCase()));
+				ps.setObject(5, ArgProcessing.getDateTime());
+				ps.setString(6, reason);
+				ps.setInt(7, display);
+				ps.executeUpdate();
+				rs = ps.getGeneratedKeys();
+				if (rs.next()) {
+					Integer bId = rs.getInt(1);
+					HashMaps.setIds(bId);
+					if (type == 1 || type == 2) {
+						HashMaps.setBannedPlayers(victim.toLowerCase(), bId);
+					}
+					if (type == 2) {
+						HashMaps.setTempBannedTime(bId, length);
+					}
+					SeruBans.printInfo(ArgProcessing.getBanTypeString(type)
+							+ ": " + victim + " Ban Id: " + bId);
+				} else {
+					SeruBans.printInfo("Error adding ban!");
+				}
+			} catch (SQLException e2) {
+				SeruBans.printInfo("Error adding ban!");
+				e2.printStackTrace();
+			}
 		}
 	}
 
@@ -530,24 +562,37 @@ public class MySqlDatabase implements Runnable {
 		ResultSet rs = null;
 		SeruBans.printInfo("Attempting to add player " + victim
 				+ " to database;");
-		// add player
+		// check if not added by other server
 		try {
-			ps = conn.prepareStatement("INSERT INTO users (name) VALUES(?);",
-					Statement.RETURN_GENERATED_KEYS);
+			ps = conn.prepareStatement("SELECT id FROM users WHERE name = ?;");
 			ps.setString(1, victim);
-			ps.executeUpdate();
-			rs = ps.getGeneratedKeys();
+			rs = ps.executeQuery();
 			if (rs.next()) {
-				Integer pId = rs.getInt(1);
-				if (lastUserId + 1 != pId)
-					maintainConnection();
-				lastUserId = pId;
+				int pId = rs.getInt(1);
 				HashMaps.setPlayerList(victim, pId);
-				SeruBans.printInfo("Player Added: " + victim + " Id: " + pId);
+				SeruBans.printInfo("Player was already added: " + victim + " Id: " + pId);
+				maintainConnection();
 			} else {
-				SeruBans.printInfo("Error adding user!");
+				// add player
+				ps.close();
+				ps = conn.prepareStatement("INSERT INTO users (name) VALUES(?);",
+						Statement.RETURN_GENERATED_KEYS);
+				ps.setString(1, victim);
+				ps.executeUpdate();
+				rs = ps.getGeneratedKeys();
+				if (rs.next()) {
+					Integer pId = rs.getInt(1);
+					if (lastUserId + 1 != pId)
+						maintainConnection();
+					lastUserId = pId;
+					HashMaps.setPlayerList(victim, pId);
+					SeruBans.printInfo("Player Added: " + victim + " Id: " + pId);
+				} else {
+					SeruBans.printInfo("Error adding user!");
+				}
 			}
 		} catch (SQLException e) {
+			maintainConnection();
 			e.printStackTrace();
 		}
 	}
