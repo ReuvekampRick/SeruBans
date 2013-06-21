@@ -1,20 +1,16 @@
 package net.serubin.serubans.commands;
 
 import net.serubin.serubans.SeruBans;
-import net.serubin.serubans.util.HashMaps;
+import net.serubin.serubans.util.DatabaseCache;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class CheckBanCommand implements CommandExecutor {
 
-    private SeruBans plugin;
-
     public CheckBanCommand(SeruBans plugin) {
-        this.plugin = plugin;
     }
 
     public boolean onCommand(CommandSender sender, Command cmd,
@@ -25,11 +21,10 @@ public class CheckBanCommand implements CommandExecutor {
                 if (args.length != 1) {
                     return false;
                 }
-                String victim = args[0].toLowerCase();
-                boolean isBanned = HashMaps.keyIsInBannedPlayers(victim);
+                boolean isBanned = DatabaseCache.keyIsInBannedPlayers(args[0]);
 
                 if (isBanned) {
-                    int id = HashMaps.getBannedPlayers(victim);
+                    int id = DatabaseCache.getBannedPlayers(args[0]);
                     sender.sendMessage(ChatColor.RED + args[0] + " is banned.");
                     sender.sendMessage(ChatColor.RED + "Ban id: "
                             + ChatColor.YELLOW + id);

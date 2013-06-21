@@ -6,10 +6,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import net.serubin.serubans.SeruBansDatabase;
 import net.serubin.serubans.SeruBans;
 import net.serubin.serubans.util.ArgProcessing;
-import net.serubin.serubans.util.HashMaps;
-import net.serubin.serubans.util.MySqlDatabase;
+import net.serubin.serubans.util.DatabaseCache;
 
 public class UnbanCommand implements CommandExecutor {
 
@@ -41,23 +41,20 @@ public class UnbanCommand implements CommandExecutor {
                 } else if (args.length > 1) {
                     return false;
                 } else {
-
                     String BannedVictim = args[0];
                     plugin.log.info("Attempting to unban " + BannedVictim);
-                    if (HashMaps.keyIsInBannedPlayers(BannedVictim
+                    if (DatabaseCache.keyIsInBannedPlayers(BannedVictim
                             .toLowerCase())) {
-                        int bId = HashMaps.getBannedPlayers(BannedVictim
+                        int bId = DatabaseCache.getBannedPlayers(BannedVictim
                                 .toLowerCase());
-                        if (HashMaps.keyIsInTempBannedTime(bId)) {
-
+                        if (DatabaseCache.keyIsInTempBannedTime(bId)) {
                             type = SeruBans.UNTEMPBAN;
-                            HashMaps.removeTempBannedTimeItem(bId);
-
+                            DatabaseCache.removeTempBannedTimeItem(bId);
                         } else {
                             type = SeruBans.UNBAN;
                         }
-                        MySqlDatabase.updateBan(type, bId);
-                        HashMaps.removeBannedPlayerItem(BannedVictim
+                        SeruBansDatabase.updateBan(type, bId);
+                        DatabaseCache.removeBannedPlayerItem(BannedVictim
                                 .toLowerCase());
                         SeruBans.printServer(ChatColor.YELLOW + BannedVictim
                                 + ChatColor.GOLD + " was unbanned!", silent);

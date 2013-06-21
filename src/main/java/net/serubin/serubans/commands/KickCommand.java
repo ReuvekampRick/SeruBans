@@ -1,9 +1,8 @@
 package net.serubin.serubans.commands;
 
+import net.serubin.serubans.SeruBansDatabase;
 import net.serubin.serubans.SeruBans;
 import net.serubin.serubans.util.ArgProcessing;
-import net.serubin.serubans.util.CheckPlayer;
-import net.serubin.serubans.util.MySqlDatabase;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -65,9 +64,10 @@ public class KickCommand implements CommandExecutor {
                 victim = plugin.getServer().getPlayer(args[0]);
                 if (victim != null) {
                     // checks players for id in database
-                    CheckPlayer.checkPlayer(victim, sender);
+					SeruBansDatabase.addOrFindPlayer(args[0].toLowerCase());
+					SeruBansDatabase.addOrFindPlayer(sender.getName().toLowerCase());
                     // adds ban to database
-                    MySqlDatabase.addBan(victim.getName(), SeruBans.KICK, 0,
+                    SeruBansDatabase.addBan(victim.getName(), SeruBans.KICK, 0,
                             mod, reason, display);
                     // prints to players on server with perms
                     SeruBans.printServer(ArgProcessing.GlobalMessage(
@@ -79,7 +79,7 @@ public class KickCommand implements CommandExecutor {
                     // sends kicker ban id
                     sender.sendMessage(ChatColor.GOLD + "Ban Id: "
                             + ChatColor.YELLOW
-                            + Integer.toString(MySqlDatabase.getLastBanId()));
+                            + Integer.toString(SeruBansDatabase.getLastBanId()));
                     // kicks player of the server
                     victim.kickPlayer(ArgProcessing.GetColor(ArgProcessing
                             .PlayerMessage(KickMessage, reason, mod)));

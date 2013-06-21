@@ -1,10 +1,9 @@
 package net.serubin.serubans.commands;
 
+import net.serubin.serubans.SeruBansDatabase;
 import net.serubin.serubans.SeruBans;
 import net.serubin.serubans.util.ArgProcessing;
-import net.serubin.serubans.util.CheckPlayer;
-import net.serubin.serubans.util.HashMaps;
-import net.serubin.serubans.util.MySqlDatabase;
+import net.serubin.serubans.util.DatabaseCache;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -64,13 +63,13 @@ public class WarnCommand implements CommandExecutor {
                 }
                 mod = sender.getName();
                 victim = plugin.getServer().getPlayer(args[0]);
+                
+				SeruBansDatabase.addOrFindPlayer(args[0]);
+				SeruBansDatabase.addOrFindPlayer(sender.getName());
                 // processes Warn message
-
                 if (victim != null) {
-                    // checks player for id in database
-                    CheckPlayer.checkPlayer(victim, sender);
                     // adds ban to database
-                    MySqlDatabase.addBan(victim.getName(), SeruBans.WARN, 0,
+                    SeruBansDatabase.addBan(victim.getName(), SeruBans.WARN, 0,
                             mod, reason, display);
                     // prints to players on server with perms
                     SeruBans.printServer(ArgProcessing.GlobalMessage(
@@ -84,20 +83,16 @@ public class WarnCommand implements CommandExecutor {
                     // sends kicker ban id
                     sender.sendMessage(ChatColor.GOLD + "Ban Id: "
                             + ChatColor.YELLOW
-                            + Integer.toString(MySqlDatabase.getLastBanId()));
-
-                    // adds player to db
+                            + Integer.toString(SeruBansDatabase.getLastBanId()));
                     return true;
                 } else {
-                    // checks player for id in database
-                    CheckPlayer.checkPlayerOffline(args[0], sender);
                     // adds ban to database
-                    MySqlDatabase.addBan(args[0], SeruBans.WARN, 0, mod,
+                    SeruBansDatabase.addBan(args[0], SeruBans.WARN, 0, mod,
                             reason, display);
                     // Adds warn
-                    MySqlDatabase.addWarn(
-                            HashMaps.getPlayerList(args[0].toLowerCase()),
-                            MySqlDatabase.getLastBanId());
+                    SeruBansDatabase.addWarn(
+                            DatabaseCache.getPlayerList(args[0].toLowerCase()),
+                            SeruBansDatabase.getLastBanId());
                     // prints to players on server with perms
                     SeruBans.printServer(ArgProcessing.GlobalMessage(
                             WarnMessage, reason, mod, args[0]), silent);
@@ -107,7 +102,7 @@ public class WarnCommand implements CommandExecutor {
                     // sends kicker ban id
                     sender.sendMessage(ChatColor.GOLD + "Ban Id: "
                             + ChatColor.YELLOW
-                            + Integer.toString(MySqlDatabase.getLastBanId()));
+                            + Integer.toString(SeruBansDatabase.getLastBanId()));
                     return true;
                 }
             }

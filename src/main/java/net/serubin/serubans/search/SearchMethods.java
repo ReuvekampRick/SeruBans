@@ -8,22 +8,22 @@ import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import net.serubin.serubans.SeruBansDatabase;
 import net.serubin.serubans.SeruBans;
 import net.serubin.serubans.util.ArgProcessing;
-import net.serubin.serubans.util.HashMaps;
-import net.serubin.serubans.util.MySqlDatabase;
+import net.serubin.serubans.util.DatabaseCache;
 
 public class SearchMethods {
 
-    private DisplayManager dm = new DisplayManager();
+    private static DisplayManager dm = new DisplayManager();
 
     /*
      * handels PLAYER searchs
      */
-    public boolean searchPlayer(String player, CommandSender sender) {
+    public static boolean searchPlayer(String player, CommandSender sender) {
         List<Integer> BanTypes = null;
         try {
-            BanTypes = MySqlDatabase.searchPlayer(HashMaps
+            BanTypes = SeruBansDatabase.searchPlayer(DatabaseCache
                     .getPlayerList(player));
         } catch (NullPointerException NPE) {
             SeruBans.self.printDebug(NPE.toString());
@@ -53,7 +53,7 @@ public class SearchMethods {
                 TempBans++;
         }
         String Banned = "not banned";
-        if (HashMaps.keyIsInBannedPlayers(player))
+        if (DatabaseCache.keyIsInBannedPlayers(player))
             Banned = "banned";
         dm.sendLine(sender, dm.createTitle(player));
         dm.sendLine(sender, " Bans: " + ChatColor.GOLD + Bans);
@@ -65,7 +65,7 @@ public class SearchMethods {
             dm.sendLine(
                     sender,
                     " Current Ban Id: " + ChatColor.GOLD
-                            + HashMaps.getBannedPlayers(player));
+                            + DatabaseCache.getBannedPlayers(player));
 
         return true;
     }
@@ -73,11 +73,11 @@ public class SearchMethods {
     /*
      * Handles out put for TYPE searches
      */
-    public boolean searchType(String player, int type, CommandSender sender) {
+    public static boolean searchType(String player, int type, CommandSender sender) {
         List<String> PlayerInfo = null;
         try {
-            PlayerInfo = MySqlDatabase.searchType(
-                    HashMaps.getPlayerList(player), type);
+            PlayerInfo = SeruBansDatabase.searchType(
+                    DatabaseCache.getPlayerList(player), type);
         } catch (NullPointerException NPE) {
             SeruBans.self.printDebug(NPE.toString());
             return true;
@@ -101,10 +101,10 @@ public class SearchMethods {
     /*
      * Handles ID search output
      */
-    public boolean searchId(int id, CommandSender sender) {
+    public static boolean searchId(int id, CommandSender sender) {
         Map<String, String> BanId = new HashMap<String, String>();
         try {
-            BanId = MySqlDatabase.getBanIdInfo(id);
+            BanId = SeruBansDatabase.getBanIdInfo(id);
         } catch (NullPointerException NPE) {
             SeruBans.self.printDebug(NPE.toString());
             return true;
@@ -126,7 +126,7 @@ public class SearchMethods {
         dm.sendLine(
                 sender,
                 "Is Banned? " + ChatColor.GOLD
-                        + HashMaps.keyIsInBannedPlayers(BanId.get("name")));
+                        + DatabaseCache.keyIsInBannedPlayers(BanId.get("name")));
         return true;
     }
 }

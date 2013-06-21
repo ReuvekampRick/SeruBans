@@ -7,13 +7,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class SearchCommand implements CommandExecutor {
 
     private SeruBans plugin;
-    private SearchMethods search = new SearchMethods();
-
+    
     public SearchCommand(SeruBans plugin) {
         this.plugin = plugin;
     }
@@ -62,7 +60,7 @@ public class SearchCommand implements CommandExecutor {
                 if (playerB && !typeB && !idB) {
                     plugin.printDebug(sender.getName()
                             + " is searching player " + player);
-                    search.searchPlayer(player.toLowerCase(), sender);
+                    SearchMethods.searchPlayer(player.toLowerCase(), sender);
                     return true;
                 } else if (playerB && typeB && !idB) {
                     plugin.printDebug(sender.getName() + " is searching "
@@ -93,10 +91,10 @@ public class SearchCommand implements CommandExecutor {
                                 + ChatColor.YELLOW + "kicks");
                         return true;
                     }
-                    search.searchType(player.toLowerCase(), typeInt, sender);
+                    SearchMethods.searchType(player.toLowerCase(), typeInt, sender);
                     return true;
                 } else if (idB && !typeB && !playerB) {
-                    search.searchId(id, sender);
+                    SearchMethods.searchId(id, sender);
                     return true;
                 } else {
                     return false;

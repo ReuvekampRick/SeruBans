@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.serubin.serubans.SeruBans;
-import net.serubin.serubans.util.HashMaps;
+import net.serubin.serubans.util.DatabaseCache;
 import net.serubin.serubans.util.HelpMessages;
 
 import org.bukkit.ChatColor;
@@ -105,42 +105,42 @@ public class SeruBansCommand implements CommandExecutor {
                             if (args[0].contains("a")
                                     && !args[0].contains("api")) {
                                 sender.sendMessage("Players: "
-                                        + HashMaps.getFullPlayerList());
+                                        + DatabaseCache.getFullPlayerList());
                                 sender.sendMessage("Banned Players: "
-                                        + HashMaps.getFullBannedPlayers());
+                                        + DatabaseCache.getFullBannedPlayers());
                                 sender.sendMessage("TempBan: "
-                                        + HashMaps.getFullTempBannedTime());
+                                        + DatabaseCache.getFullTempBannedTime());
                                 sender.sendMessage("Ids: "
-                                        + HashMaps.getFullIds());
+                                        + DatabaseCache.getFullIds());
                                 return true;
                             }
                             if (args[0].contains("p")
                                     && !args[0].contains("api")) {
                                 sender.sendMessage("Players: "
-                                        + HashMaps.getFullPlayerList());
+                                        + DatabaseCache.getFullPlayerList());
                             }
                             if (args[0].contains("i")
                                     && !args[0].contains("api")) {
                                 sender.sendMessage("Ids: "
-                                        + HashMaps.getFullIds());
+                                        + DatabaseCache.getFullIds());
                             }
                             if (args[0].contains("b")) {
                                 sender.sendMessage("Banned Players: "
-                                        + HashMaps.getFullBannedPlayers());
+                                        + DatabaseCache.getFullBannedPlayers());
                             }
                             if (args[0].contains("t")) {
                                 sender.sendMessage("TempBan: "
-                                        + HashMaps.getFullTempBannedTime());
+                                        + DatabaseCache.getFullTempBannedTime());
                             }
                             if (args[0].contains("w")) {
                                 sender.sendMessage("Warns: "
-                                        + HashMaps.getFullWarnList());
+                                        + DatabaseCache.getFullWarnList());
                             }
                             if (args[0].contains("e")) {
                                 plugin.log
                                         .info(sender.getName()
                                                 + " has exected the export command. Now attempting to export bans to vanilla bans file. Once this has completed unbanning a player in serubans may not unban them. Make sure to remove their name from the vanilla bans file!");
-                                List<String> ban = HashMaps.getBannedForFile();
+                                List<String> ban = DatabaseCache.getBannedForFile();
                                 Iterator<String> iterator = ban.iterator();
                                 try {
                                     BufferedWriter banlist = new BufferedWriter(

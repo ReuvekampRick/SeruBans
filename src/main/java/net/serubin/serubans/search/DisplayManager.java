@@ -1,11 +1,8 @@
 package net.serubin.serubans.search;
 
-import net.serubin.serubans.SeruBans;
 import net.serubin.serubans.util.ArgProcessing;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class DisplayManager {
 

@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.serubin.serubans.SeruBans;
-import net.serubin.serubans.util.HashMaps;
+import net.serubin.serubans.util.DatabaseCache;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -59,35 +59,35 @@ public class DebugCommand implements CommandExecutor {
                 if (args[0].startsWith("-")) {
                     if (args[0].contains("a") && !args[0].contains("api")) {
                         sender.sendMessage("Players: "
-                                + HashMaps.getFullPlayerList());
+                                + DatabaseCache.getFullPlayerList());
                         sender.sendMessage("Banned Players: "
-                                + HashMaps.getFullBannedPlayers());
+                                + DatabaseCache.getFullBannedPlayers());
                         sender.sendMessage("TempBan: "
-                                + HashMaps.getFullTempBannedTime());
-                        sender.sendMessage("Ids: " + HashMaps.getFullIds());
+                                + DatabaseCache.getFullTempBannedTime());
+                        sender.sendMessage("Ids: " + DatabaseCache.getFullIds());
                         return true;
                     }
                     if (args[0].contains("p") && !args[0].contains("api")) {
                         sender.sendMessage("Players: "
-                                + HashMaps.getFullPlayerList());
+                                + DatabaseCache.getFullPlayerList());
                     }
                     if (args[0].contains("i") && !args[0].contains("api")) {
-                        sender.sendMessage("Ids: " + HashMaps.getFullIds());
+                        sender.sendMessage("Ids: " + DatabaseCache.getFullIds());
                     }
                     if (args[0].contains("b")) {
                         sender.sendMessage("Banned Players: "
-                                + HashMaps.getFullBannedPlayers());
+                                + DatabaseCache.getFullBannedPlayers());
                     }
                     if (args[0].contains("t")) {
                         sender.sendMessage("TempBan: "
-                                + HashMaps.getFullTempBannedTime());
+                                + DatabaseCache.getFullTempBannedTime());
                     }
                     if (args[0].contains("w")) {
                         sender.sendMessage("Warns: "
-                                + HashMaps.getFullWarnList());
+                                + DatabaseCache.getFullWarnList());
                     }
                     if (args[0].contains("e")) {
-                        List<String> ban = HashMaps.getBannedForFile();
+                        List<String> ban = DatabaseCache.getBannedForFile();
                         Iterator<String> iterator = ban.iterator();
                         try {
                             BufferedWriter banlist = new BufferedWriter(
